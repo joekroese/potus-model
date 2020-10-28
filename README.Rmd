@@ -60,23 +60,23 @@ start_date <- as.Date("2008-03-01") # Keeping all polls after March 1, 2016
 evs_df <- read_csv('data/2012.csv')
 
 # will read in the most recent back-test for 2008
-out  <- read_rds(sprintf('models/backtest_2008/stan_model_%s_normal_final.rds',RUN_DATE))
+out  <- read_rds(sprintf('models/backtest_2008/stan_model_%s.rds',RUN_DATE))
 
 # get all the polling data
 #setwd(here("data/"))
 all_polls <- read_csv('data/all_polls_2008.csv')
 
-# select relevant columns from HufFPost polls
+# select relevant columns from HuffPost polls
 all_polls <- all_polls %>%
   dplyr::select(state, pollster, number.of.observations, mode,population,
                 start.date, 
                 end.date,
-                obama, mccain, undecided, other)%>%
+                obama, mccain, undecided, other) %>%
   mutate(end.date = mdy(end.date),
          start.date = mdy(start.date))
 
 
-# make sure we've got nothing from the futuree
+# make sure we've got nothing from the future
 all_polls <- all_polls %>%
   filter(ymd(end.date) <= RUN_DATE)
 
@@ -169,7 +169,7 @@ state_elec_results <- read.csv("data/2008.csv",
 
 rownames(state_elec_results) <- state_elec_results$state
 
-# get state incdices
+# get state indices
 all_states <- state_elec_results$state
 state_name <- state_elec_results$state_name
 names(state_name) <- state_elec_results$state
@@ -233,7 +233,7 @@ pct_obama_natl <- pblapply(1:dim(predicted_score)[2],
                            temp <- predicted_score[x,,] %>% as.data.frame()
                            names(temp) <- colnames(state_correlation)
                            
-                           # for each row, get weigted natl vote
+                           # for each row, get weighted natl vote
                            tibble(natl_vote = apply(temp,MARGIN = 1,function(y){weighted.mean(y,state_weights)})) %>%
                              mutate(t = row_number() + min(df$begin)) %>%
                              mutate(draw = x)
@@ -390,7 +390,7 @@ briers.2008 <- tibble(outlet='economist (backtest)',
        states_correct=sum(round(compare$obama_win) == round(compare$obama_win_actual)))
 
 
-# compare model estiamte v actual results
+# compare model estimate v actual results
 model_v_actual.2008 <- pct_obama %>% 
   filter(t==max(t),state!='--') %>% 
   left_join(politicaldata::pres_results %>% filter(year == 2008) %>%
@@ -576,13 +576,13 @@ start_date <- as.Date("2012-03-01") # Keeping all polls after March 1, 2016
 evs_df <- read_csv('data/2012.csv')
 
 # will read in the most recent back-test for 2012
-out  <- read_rds(sprintf('models/backtest_2012/stan_model_%s_normal_final.rds',RUN_DATE))
+out  <- read_rds(sprintf('models/backtest_2012/stan_model_%s.rds',RUN_DATE))
 
 # get all the polling data
 #setwd(here("data/"))
 all_polls <- read_csv('data/all_polls_2012.csv')
 
-# select relevant columns from HufFPost polls
+# select relevant columns from HuffPost polls
 all_polls <- all_polls %>%
   dplyr::select(state, pollster, number.of.observations, mode,population,
                 start.date, 
@@ -592,7 +592,7 @@ all_polls <- all_polls %>%
          start.date = mdy(start.date))
 
 
-# make sure we've got nothing from the futuree
+# make sure we've got nothing from the future
 all_polls <- all_polls %>%
   filter(ymd(end.date) <= RUN_DATE)
 
@@ -679,7 +679,7 @@ state_elec_results <- read.csv("data/2012.csv",
 
 rownames(state_elec_results) <- state_elec_results$state
 
-# get state incdices
+# get state indices
 all_states <- state_elec_results$state
 state_name <- state_elec_results$state_name
 names(state_name) <- state_elec_results$state
@@ -744,7 +744,7 @@ pct_obama_natl <- pblapply(1:dim(predicted_score)[2],
                            temp <- predicted_score[x,,] %>% as.data.frame()
                            names(temp) <- colnames(state_correlation)
                            
-                           # for each row, get weigted natl vote
+                           # for each row, get weighted natl vote
                            tibble(natl_vote = apply(temp,MARGIN = 1,function(y){weighted.mean(y,state_weights)})) %>%
                              mutate(t = row_number() + min(df$begin)) %>%
                              mutate(draw = x)
@@ -1094,13 +1094,13 @@ start_date <- as.Date("2016-03-01") # Keeping all polls after March 1, 2016
 evs_df <- read_csv('data/2012.csv')
 
 # will read in the most recent back-test for 2012
-out  <- read_rds(sprintf('models/stan_model_%s_normal_final.rds',RUN_DATE))
+out  <- read_rds(sprintf('models/stan_model_%s.rds',RUN_DATE))
 
 # get all the polling data
 #setwd(here("data/"))
 all_polls <- read_csv('data/all_polls.csv')
 
-# select relevant columns from HufFPost polls
+# select relevant columns from HuffPost polls
 all_polls <- all_polls %>%
   dplyr::select(state, pollster, number.of.observations, mode,population,
                 start.date, 
@@ -1110,7 +1110,7 @@ all_polls <- all_polls %>%
          start.date = ymd(start.date))
 
 
-# make sure we've got nothing from the futuree
+# make sure we've got nothing from the future
 all_polls <- all_polls %>%
   filter(ymd(end.date) <= RUN_DATE)
 
@@ -1203,7 +1203,7 @@ state_elec_results <- read.csv("data/2012.csv",
 
 rownames(state_elec_results) <- state_elec_results$state
 
-# get state incdices
+# get state indices
 all_states <- state_elec_results$state
 state_name <- state_elec_results$state_name
 names(state_name) <- state_elec_results$state
@@ -1268,7 +1268,7 @@ pct_clinton_natl <- pblapply(1:dim(predicted_score)[2],
                            temp <- predicted_score[x,,] %>% as.data.frame()
                            names(temp) <- colnames(state_correlation)
                            
-                           # for each row, get weigted natl vote
+                           # for each row, get weighted natl vote
                            tibble(natl_vote = apply(temp,MARGIN = 1,function(y){weighted.mean(y,state_weights)})) %>%
                              mutate(t = row_number() + min(df$begin)) %>%
                              mutate(draw = x)
@@ -1429,7 +1429,7 @@ briers.2016 <- tibble(outlet = c('538 polls-plus','538 polls-only','princeton','
   arrange(ev_wtd_brier) 
 
 
-# compare model estiamte v actual results
+# compare model estimate v actual results
 model_v_actual.2016 <- pct_clinton %>% 
   filter(t==max(t),state!='--') %>% 
   left_join(politicaldata::pres_results %>% filter(year == 2016) %>%

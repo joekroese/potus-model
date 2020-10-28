@@ -1,66 +1,4 @@
-## Desc
-# Refactored version run file
-
-## Setup
-#rm(list = ls())
-options(mc.cores = 6)
-n_chains <- 6
-n_cores <- 6
-n_sampling <- 500
-n_warmup <- 500
-n_refresh <- n_sampling*0.1
-
-## Libraries
-{
-  library(tidyverse, quietly = TRUE)
-  library(rstan, quietly = TRUE)
-  library(stringr, quietly = TRUE)
-  library(lubridate, quietly = TRUE)
-  library(gridExtra, quietly = TRUE)
-  library(pbapply, quietly = TRUE)
-  library(parallel, quietly = TRUE)
-  library(boot, quietly = TRUE)
-  library(lqmm, quietly = TRUE) 
-  library(gridExtra, quietly = TRUE)
-  library(ggrepel, quietly = TRUE)
-}
-
-## Functions
-cov_matrix <- function(n, sigma2, rho){
-  m <- matrix(nrow = n, ncol = n)
-  m[upper.tri(m)] <- rho
-  m[lower.tri(m)] <- rho
-  diag(m) <- 1
-  (sigma2^.5 * diag(n))  %*% m %*% (sigma2^.5 * diag(n))
-}
-
-mean_low_high <- function(draws, states, id){
-  tmp <- draws
-  draws_df <- data.frame(mean = inv.logit(apply(tmp, MARGIN = 2, mean)),
-                         high = inv.logit(apply(tmp, MARGIN = 2, mean) + 1.96 * apply(tmp, MARGIN = 2, sd)), 
-                         low  = inv.logit(apply(tmp, MARGIN = 2, mean) - 1.96 * apply(tmp, MARGIN = 2, sd)),
-                         state = states, 
-                         type = id)
-  return(draws_df) 
-}
-
-check_cov_matrix <- function(mat,wt=state_weights){
-  # get diagnoals
-  s_diag <- sqrt(diag(mat))
-  # output correlation matrix
-  cor_equiv <- cov2cor(mat)
-  diag(cor_equiv) <- NA
-  # output equivalent national standard deviation
-  nat_product <- sqrt(t(wt) %*% mat %*% wt) / 4
-  
-  # print & output
-  hist(as_vector(cor_equiv),breaks = 10)
-  
-  hist(s_diag,breaks=10)
-  
-  
-  print(sprintf('national sd of %s',round(nat_product,4)))
-}
+source(here::here("scripts/model/setup.R"))
 
 ## Master variables
 RUN_DATE <- ymd("2012-11-06")
@@ -179,7 +117,7 @@ states2008 <- read.csv("data/2008.csv",
 
 rownames(states2008) <- states2008$state
 
-# get state incdices
+# get state indices
 all_states <- states2008$state
 state_name <- states2008$state_name
 names(state_name) <- states2008$state
@@ -583,7 +521,8 @@ mu_b_T_posterior_draw <- rstan::extract(out, pars = "mu_b")[[1]][,,250]
 mu_b_T_prior_draws     <- mean_low_high(y, states = colnames(y), id = "prior")
 mu_b_T_posterior_draws <- mean_low_high(mu_b_T_posterior_draw, states = colnames(y), id = "posterior")
 mu_b_T <- rbind(mu_b_T_prior_draws, mu_b_T_posterior_draws)
-mu_b_t_plt <- mu_b_T %>% arrange(mean) %>%
+mu_b_t_plt <- mu_b_T %>% 
+  arrange(mean) %>%
   ggplot(.) +
   geom_point(aes(y = mean, x = reorder(state, mean), color = type), position = position_dodge(width = 0.5)) +
   geom_errorbar(aes(ymin = low, ymax = high, x = state, color = type), width = 0, position = position_dodge(width = 0.5)) +
