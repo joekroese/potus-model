@@ -1,6 +1,5 @@
 State and national presidential election forecasting model
 ================
-Last update on Thursday October 15, 2020 at 12:29 PM EDT
 
 Code for a dynamic multilevel Bayesian model to predict US presidential
 elections. Written in R and Stan.
@@ -20,7 +19,7 @@ Narrow Biden win in the electoral college.
 
 On average, Republicans will have been underpolled by around 2%. This will lead to Trump taking some states that other models predict he wouldn't: namely Iowa, Georgia, Arizona and North Carolina.
 
-### State wins by part
+### State wins by party
 
 #### Democrat
 
