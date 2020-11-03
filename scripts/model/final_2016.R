@@ -2,11 +2,8 @@ source(here::here("scripts/model/setup.R"))
 
 ## Master variables
 RUN_DATE <- ymd("2016-11-08")
-#RUN_DATE <- ymd("2016-10-19")
-
 election_day <- ymd("2016-11-08")
 start_date <- as.Date("2016-03-01") # Keeping all polls after March 1, 2016
-
 
 # wrangle polls -----------------------------------------------------------
 all_polls <- read.csv("data/all_polls.csv", stringsAsFactors = FALSE, header = TRUE)
